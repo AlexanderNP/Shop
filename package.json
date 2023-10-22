@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@bem-react/classname": "^1.6.0",
     "@delement/eslint-config-primary": "^1.0.4",
     "@delement/stylelint-config-primary": "^1.0.3",
     "eslint": "^8.51.0",

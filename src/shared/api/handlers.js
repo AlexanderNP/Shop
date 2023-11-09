@@ -1,76 +1,271 @@
 import { rest } from "msw"
 
-let cartItems = [];
+const catalogProduct = [
+  {
+    idProduct: "1",
+    label: "Бесплатный офлайн курс",
+    productName: "«Frontend-разработчик»",
+    category: [
+      "Веб-разработка",
+      "Мобильная разработка"
+    ],
+    imageSrc: "/images/img1.svg",
+    registration: {
+      "startDate": "18.08.2023",
+      "endDate": "24.09.2023"
+    },
+    startCourse: "26.09.2023",
+    price: 10000,
+    isPopular: true
+  },
+  {
+    idProduct: "2",
+    label: "Бесплатный офлайн курс",
+    productName: "«Backend-разработчик»",
+    category: [
+      "Веб-разработка",
+      "Мобильная разработка",
+      "Бэкенд-разработка"
+    ],
+    imageSrc: "/images/img3.svg",
+    registration: {
+      "startDate": "18.08.2023",
+      "endDate": "24.09.2023"
+    },
+    startCourse: "26.09.2023",
+    price: 11000,
+    isPopular: true
+  },
+  {
+    idProduct: "3",
+    label: "Бесплатный офлайн курс",
+    productName: "«Project manager»",
+    category: [
+      "Управление разработкой",
+      "IT-инфраструктура"
+    ],
+    imageSrc: "/images/img4.svg",
+    registration: {
+      "startDate": "10.09.2023",
+      "endDate": "26.09.2023"
+    },
+    startCourse: "22.09.2023",
+    price: 12000,
+    isPopular: true
+  },
+  {
+    idProduct: "4",
+    label: "Бесплатный офлайн курс",
+    productName: "«Full-stack-разработчик»",
+    category: [
+      "Веб-разработка",
+      "Мобильная разработка",
+      "Бэкенд-разработка"
+    ],
+    imageSrc: "/images/img1.svg",
+    registration: {
+      "startDate": "16.09.2023",
+      "endDate": "26.10.2023"
+    },
+    startCourse: "26.09.2023",
+    price: 13000,
+    isPopular: true
+  },
+  {
+    idProduct: "5",
+    label: "Бесплатный офлайн курс",
+    productName: "«Системный аналитик»",
+    category: [
+      "Анализ данных",
+      "IT-инфраструктура"
+    ],
+    imageSrc: "/images/img3.svg",
+    registration: {
+      "startDate": "14.09.2023",
+      "endDate": "29.09.2023"
+    },
+    startCourse: "15.09.2023",
+    price: 14000,
+    isPopular: true
+  }
+];
+
+let cartProducts = [];
+
 
 export const handlers = [
 
   // Добовление товаров
   rest.post("/cart/add", (req, res, ctx) => {
 
-    const { productId, quantity } = req.body;
+    const { idProduct } = req.body;
 
-    // Проверяем, есть ли товар с таким productId уже в корзине
-    const existingItemIndex = cartItems.findIndex(item => item.productId === productId);
+    // // Проверяем, есть ли товар с таким productId уже в корзине
+    // const existingItemIndex = cartItems.findIndex(item => item.productId === productId);
 
-    if (existingItemIndex !== -1) {
-      // Товар уже существует в корзине, обновляем его количество
-      cartItems[existingItemIndex].quantity += quantity;
-    } else {
-      // Товара нет в корзине, добавляем его
-      cartItems.push({ productId, quantity });
+    // if (existingItemIndex !== -1) {
+    //   // Товар уже существует в корзине, обновляем его количество
+    //   cartItems[existingItemIndex].quantity += quantity;
+    // } else {
+    //   // Товара нет в корзине, добавляем его
+    //   cartItems.push({ productId, quantity });
+    // }
+
+    for (let index = 0; index < catalogProduct.length; index++) {
+
+      const item = catalogProduct[index];
+
+      for (let jIndex = 0; jIndex < item.idProduct.length; jIndex++) {
+
+        if (item.idProduct[jIndex] === idProduct) {
+
+          cartProducts.push(catalogProduct[index]);
+          break;
+
+        }
+
+      }
+
     }
+
+    if (cartProducts.length > cartProducts.length-1) {
+      const s = cartProducts.length - (cartProducts.length-1);
+      cartProducts = cartProducts.slice(cartProducts.length - s);
+    }
+
     return res(
       ctx.status(200),
       ctx.json({
         isSuccess: true,
-        cartItems
+        cartProducts
       }));
   }),
 
   // Удаление товаров
   rest.post("/cart/remove", (req, res, ctx) => {
 
-    const { productId } = req.body;
+    const { idProduct } = req.body;
 
+    for (let index = 0; index < catalogProduct.length; index++) {
+
+      const item = catalogProduct[index];
+
+      for (let jIndex = 0; jIndex < item.idProduct.length; jIndex++) {
+
+        if (item.idProduct[jIndex] === idProduct) {
+
+          cartProducts.push(catalogProduct[index]);
+          break;
+
+        }
+
+      }
+
+    }
+    
     // Проверяем, есть ли товар с таким productId в корзине
-    const existingItemIndex = cartItems.findIndex(item => item.productId === productId);
+    const existingItemIndex = cartProducts.findIndex(item => item.idProduct === idProduct);
 
     if (existingItemIndex !== -1) {
       // Товар существует в корзине, удаляем его
-      cartItems.splice(existingItemIndex, 1);
+      cartProducts.splice(existingItemIndex, 1);
     }
 
     return res(
       ctx.status(200),
       ctx.json({
         isSuccess: true,
-        cartItems
+        cartProducts,
+        existingItemIndex
       }));
   }),
 
   //Получение товаров
-  rest.get("/products", (req, res, ctx) => {
+  rest.post("/filterProducts", (req, res, ctx) => {
+
+    const { searchParam } = req.body
+
+    const products = [];
+
+    for (let index = 0; index < catalogProduct.length; index++) {
+
+      const item = catalogProduct[index];
+
+      for (let jIndex = 0; jIndex < item.category.length; jIndex++) {
+
+        if (item.category[jIndex] === searchParam) {
+
+          products.push(catalogProduct[index]);
+          break;
+
+        }
+
+      }
+
+    }
+
+    const responce = {
+
+      products: products
+
+    }
+
     return res(
       ctx.status(200),
       ctx.json({
-        isSuccess: "true",
-        data: {
-          idProduct: "123",
-          label: "Бесплатный офлайн курс",
-          productName: "«Frontend-разработчик»",
-          category: [
-            "Веб-разработка",
-            "Мобильная разработка"
-          ],
-          imageSrc: "/images/course-image.png",
-          registration: {
-            "startDate": "298347302984",
-            "endDate": "239847320984"
+        isSuccess: true,
+        data: responce
+      }),
+    )
+  }),
+  rest.get("/products", (req, res, ctx) => {
+    const products = catalogProduct
+    const responce = {
+      products
+    }
+    return res(
+      ctx.status(200),
+      ctx.json({
+        isSuccess: true,
+        data: responce
+      }),
+    )
+  }),
+  rest.get("/filters", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        cat: [
+          {
+            name: "Все курсы",
+            searchParam: "all",
+            isChecked: true
           },
-          startCourse: "2389047320",
-          price: 10000,
-          isPopular: true
-        }
+          {
+            name: "Бэкенд-разработка",
+            searchParam: "Бэкенд-разработка",
+          },
+          {
+            name: "Веб-разработка",
+            searchParam: "Веб-разработка",
+          },
+          {
+            name: "Мобильная разработка",
+            searchParam: "Мобильная разработка",
+          },
+          {
+            name: "Анализ данных",
+            searchParam: "Анализ данных",
+          },
+          {
+            name: "IT-инфраструктура",
+            searchParam: "IT-инфраструктура",
+          },
+          {
+            name: "Управление разработкой",
+            searchParam: "Управление разработкой",
+          },
+        ]
       }),
     )
   }),

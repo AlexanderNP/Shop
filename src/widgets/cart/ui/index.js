@@ -21,15 +21,18 @@ export function Cart(props) {
                 <p class="${getClassName("count")}">count</p>
                 <p class="${getClassName("result-price")}">price</p>
               </div>
-              <label class="${getClassName("label")}">${Input({
+              <label class="${getClassName("label")}">
+              <p class="${getClassName("error")}"></p>
+              ${Input({
                 extraAttrs: {
                     "placeholder": "Промокод" ,
                     "id": "input"
                 }
-                })}</label>
+                })}
+                </label>
               <div class="${getClassName("text-box")}">
                 <p class="${getClassName("result")}">Итоговая сумма</p>
-                <p class="${getClassName("result-price")}">price</p>
+                <p class="${getClassName("result-price result-price-promo")}">price</p>
               </div>
               ${Button({
                   "label": "Оформить заказ",

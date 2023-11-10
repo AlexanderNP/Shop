@@ -1,5 +1,6 @@
 import "./reset.pcss"
 import "./style.pcss"
+import "./fonts.pcss"
 import "../widgets/header/style.pcss"
 import "../widgets/footer/style.pcss"
 import "../widgets/filter/style.pcss"

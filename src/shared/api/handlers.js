@@ -1,4 +1,5 @@
 import { rest } from "msw"
+import useCartStore from "../zustand";
 
 const catalogProduct = [
   {
@@ -92,6 +93,31 @@ const catalogProduct = [
 
 let cartProducts = [];
 
+const calculateTotalPrice = () => {
+  let total = 0;
+  
+  let items = useCartStore.getState().cartProducts
+    
+    // Подсчет общей стоимости товаров
+    for (let i = 0; i < items.length; i++) {
+      total += items[i].price;  // Суммируем цены каждого товара
+    }
+  
+  // Возвращение общей стоимости
+  return total;
+}
+
+const calculatePriceWithPromocode = (promocode) => {
+  const totalPrice = calculateTotalPrice();
+
+  // Заведем условие что промокод "SALE10" дает скидку 10%
+  if (promocode === 'SALE10') {
+      return totalPrice * 0.9;   // Уменьшение цены на 10%
+  } else {
+      return totalPrice;         // Нет скидки если код промокода не подходит
+  }
+};
+
 
 export const handlers = [
 
@@ -99,17 +125,6 @@ export const handlers = [
   rest.post("/cart/add", (req, res, ctx) => {
 
     const { idProduct } = req.body;
-
-    // // Проверяем, есть ли товар с таким productId уже в корзине
-    // const existingItemIndex = cartItems.findIndex(item => item.productId === productId);
-
-    // if (existingItemIndex !== -1) {
-    //   // Товар уже существует в корзине, обновляем его количество
-    //   cartItems[existingItemIndex].quantity += quantity;
-    // } else {
-    //   // Товара нет в корзине, добавляем его
-    //   cartItems.push({ productId, quantity });
-    // }
 
     for (let index = 0; index < catalogProduct.length; index++) {
 
@@ -268,5 +283,12 @@ export const handlers = [
         ]
       }),
     )
+  }),
+  rest.post("/apply-promocode", (req, res, ctx) => {
+    const { promocode } = req.body;
+
+    const price = calculatePriceWithPromocode(promocode);
+
+    return res(ctx.status(200), ctx.json({ price }));
   }),
 ]

@@ -1,5 +1,7 @@
 import { popUp } from "../../../features/popupAfterOrder/ui/index";
 import { popUpScipt } from "../../../features/popupAfterOrder";
+import useCartStore from "../../../shared/zustand/index"
+import { getPromocode } from "../api";
 
 export default class CartModel {
   static selector = "[data-js-cart]";
@@ -16,6 +18,7 @@ export default class CartModel {
 
     this.renderParamProductsToForm()
     this.placeOrder()
+    this.inputFormListener()
   }
 
   getCountProducts() {
@@ -49,8 +52,46 @@ export default class CartModel {
   }
 
   placeOrder() {
+    const btnOrder = document.querySelector(".btn--form-product")
+
+    if (useCartStore.getState().cartProducts.length === 0) {
+      btnOrder.disabled = true
+    }
     const popContainer = document.querySelector(CartModel.selectorPop)
     popContainer.innerHTML = `${popUp()}`
     popUpScipt()
+  }
+
+  async fetchPromocode(props) {
+    try {
+      const response = await getPromocode(props); // Получите данные из API
+      console.log(response)
+      return response
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  updatePrice() {
+    const promocodeInput = document.querySelector('.input');
+    const priceDisplay = document.querySelector('.result-price-promo');
+    const errorMessage = document.querySelector('.cart__error');
+    const promocode = promocodeInput.value.trim();
+    this.fetchPromocode(promocode).then(response => {
+      if (Number(priceDisplay.textContent) !== response.price){
+        priceDisplay.textContent = `${response.price}`;
+        errorMessage.textContent = "";
+      }
+      else{
+        errorMessage.textContent = "Неверный промокод";
+      }
+    })
+  }
+
+  inputFormListener() {
+    const promocodeInput = document.querySelector('.input');
+    promocodeInput.addEventListener('blur', () => {
+      this.updatePrice()
+    })
   }
 }

@@ -1,15 +1,21 @@
 import { defineConfig } from "vite"
 import { createHtmlPlugin } from "vite-plugin-html"
 import mainPage from "./src/pages/index"
-import aboutPage from "./src/pages/about"
+import cartPage from "./src/pages/cart"
+import catalogPage from "./src/pages/catalog"
+
 const pages = [
   {
       name: "index",
       content: mainPage()
   },
   {
-      name: "about",
-      content: aboutPage()
+      name: "cart",
+      content: cartPage()
+  },
+  {
+    name: "catalog",
+    content: catalogPage()
   }
 ]
 

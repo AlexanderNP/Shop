@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@bem-react/classname": "^1.6.0",
     "@delement/eslint-config-primary": "^1.0.4",
     "@delement/stylelint-config-primary": "^1.0.3",
     "eslint": "^8.51.0",
@@ -22,7 +23,8 @@
     "stylelint": "^15.10.3",
     "stylelint-config-standard": "^34.0.0",
     "vite": "^4.4.5",
-    "vite-plugin-html": "^3.2.0"
+    "vite-plugin-html": "^3.2.0",
+    "zustand": "^4.4.6"
   },
   "browserslist": {
     "production": [
@@ -42,5 +44,8 @@
   },
   "msw": {
     "workerDirectory": "public"
+  },
+  "dependencies": {
+    "swiper": "^11.0.4"
   }
 }

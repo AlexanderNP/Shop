@@ -1,12 +1,10 @@
 import { commonComponentProps, getAttrs } from "../../lib"
 
-export function Button(props){
-  const {label = "", extraClasses = {}, extraAttrs = {}, baseClass = "btn", children, isDisabled = false} = props
+export function Button(props) {
+  const { label = "", extraClasses = {}, extraAttrs = {}, baseClass = "btn", getCN, children } = { ...commonComponentProps, ...props }
+  const getClassName = (elem, mod) => getCN(baseClass, elem, mod)
 
-  const getClassName = (elem, mod) => commonComponentProps.getCN(baseClass, elem, mod)
-
-  return `<button disabled="${isDisabled}" class="${getClassName("", extraClasses)}" ${getAttrs(extraAttrs)}>
-    ${children || `<span class="${getClassName("label")}">${label}</span>`}
-    </button>
-  `
+  return `<button class="${getClassName("", extraClasses)}" ${getAttrs(extraAttrs)}>
+              ${children || `<span class="${getClassName("label")}">${label}</span>`}
+          </button>`
 }
